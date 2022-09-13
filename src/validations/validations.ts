@@ -24,3 +24,24 @@ export const signinValidations = yup.object().shape({
     password: yup.string()
         .required("password is required field")
 })
+
+export const booleanQuestionValidations = yup.object().shape({
+    question: yup.string()
+        .required("question is a required field"),
+
+    correctAnswer: yup.string()
+        .required("correctAnswer is a required field"),
+})
+
+export const choiceQuestionValidations = yup.object().shape({
+    question: yup.string()
+        .required("question is a required field"),
+
+    correctAnswer: yup.string()
+        .required("correctAnswer is a required field"),
+
+    options: yup.array()
+        .max(4, "Invalid number of options")
+        .min(4, "Invalid number of options")
+        .required("options is a required field"),
+})

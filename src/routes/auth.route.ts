@@ -3,7 +3,7 @@ import userModel from "../models/user.model.js";
 import { signupValidations, signinValidations } from "../validations/validations.js"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
-import { UserResponse } from "src/types/types.js";
+import { UserResponse } from "../types/types.js";
 
 const authRouter = Router()
 

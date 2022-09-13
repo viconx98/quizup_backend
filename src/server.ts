@@ -6,6 +6,7 @@ import mongoose from "mongoose"
 import cors from "cors"
 import morgan from "morgan"
 import authRouter from "./routes/auth.route.js"
+import quizRouter from "./routes/quiz.route.js"
 import jwt from "jsonwebtoken"
 import { User, UserRequest } from "./types/types.js"
 
@@ -23,7 +24,7 @@ expressApp.get("/", (request: Request, response: Response) => {
 expressApp.use("/auth", authRouter)
 expressApp.use(authorize)
 
-expressApp.use("/quiz", authRouter)
+expressApp.use("/quiz", quizRouter)
 
 let expressServer: any = null
 

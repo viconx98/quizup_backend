@@ -1,17 +1,24 @@
 import { Schema, model, connect, Types } from 'mongoose';
 
-interface IQuestion {
-    question: string
+// TODO: Images for questions
+export enum QuestionType {
+    Boolean = "boolean",
+    Choice = "choice"
 }
 
+interface IQuestion {
+    question: string,
+    correctAnswer: any,
+    questionType: QuestionType.Boolean | QuestionType.Choice
+}
 
-interface IBooleanQuestion {
+export interface IBooleanQuestion extends IQuestion {
     question: string,
     correctAnswer: boolean,
-    options: boolean[]
+    options?: boolean[]
 }
 
-interface IChoiceQuestion {
+export interface IChoiceQuestion extends IQuestion {
     question: string,
     correctAnswer: string,
     options: string[]
@@ -19,30 +26,34 @@ interface IChoiceQuestion {
 
 interface IQuiz {
     author: Schema.Types.ObjectId,
-    questions: IQuestion[],
+    questions: (IBooleanQuestion | IChoiceQuestion)[],
     timePerQuestion: number
 }
 
-const questionSchema = new Schema<IQuestion>({
+export const booleanQuestionSchema = new Schema<IBooleanQuestion>({
     question: {
         type: String,
         required: true
-    }
-}, {timestamps: true})
-
-export const booleanQuestionSchema = questionSchema.discriminator("BooleanQuestion", {
+    },
     correctAnswer: {
         type: Boolean,
         required: true
     },
     options: {
         type: [Boolean],
-        required: true,
         default: [true, false]
+    },
+    questionType: {
+        type: String,
+        default: QuestionType.Boolean
     }
 })
 
-export const choiceQuestionSchema = questionSchema.discriminator("ChoiceQuestion", {
+export const choiceQuestionSchema = new Schema<IChoiceQuestion>({
+    question: {
+        type: String,
+        required: true
+    },
     correctAnswer: {
         type: String,
         required: true
@@ -50,9 +61,14 @@ export const choiceQuestionSchema = questionSchema.discriminator("ChoiceQuestion
     options: {
         type: [String],
         required: true,
+    },
+    questionType: {
+        type: String,
+        default: QuestionType.Choice
     }
 })
 
+// TODO: Figure out a better way for multiple type questions
 const quizSchema = new Schema<IQuiz>({
     author: {
         type: Schema.Types.ObjectId,
@@ -60,7 +76,7 @@ const quizSchema = new Schema<IQuiz>({
         required: true
     },
     questions: {
-        type: [questionSchema],
+        type: [choiceQuestionSchema, booleanQuestionSchema],
         default: []
     }
 })
