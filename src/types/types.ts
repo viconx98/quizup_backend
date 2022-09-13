@@ -1,4 +1,6 @@
-interface UserResponse {
+import { Request } from "express";
+
+export interface UserResponse {
     id: string;
     name: string;
     email: string;
@@ -6,7 +8,7 @@ interface UserResponse {
     eat?: string;
 }
 
-interface User {
+export interface User {
     id: string;
     name: string;
     email: string;
@@ -14,6 +16,6 @@ interface User {
     eat?: string;
 }
 
-interface UserRequest {
+export interface UserRequest extends Request {
     user: User
 }

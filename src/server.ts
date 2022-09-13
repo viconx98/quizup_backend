@@ -6,6 +6,8 @@ import mongoose from "mongoose"
 import cors from "cors"
 import morgan from "morgan"
 import authRouter from "./routes/auth.route.js"
+import jwt from "jsonwebtoken"
+import { User, UserRequest } from "./types/types.js"
 
 
 const expressApp = express()
@@ -19,6 +21,9 @@ expressApp.get("/", (request: Request, response: Response) => {
 })
 
 expressApp.use("/auth", authRouter)
+expressApp.use(authorize)
+
+expressApp.use("/quiz", authRouter)
 
 let expressServer: any = null
 
@@ -35,3 +40,24 @@ mongoose.connect(DB_URI!)
         console.error("Connection to database failed with", error)
         console.error("Server will not be started")
     })
+
+function authorize(request: UserRequest, response: Response, next: () => void) {
+    const authorization = request.headers.authorization
+
+    try {
+        if (authorization === null || authorization === undefined) {
+            throw new Error("Invalid access token")
+        }
+
+        const token = authorization.split(" ")[1]
+        const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!)
+
+        request.user = payload as User
+
+        next()
+    } catch (error) {
+        console.error(error)
+        return response.status(403)
+            .json({ error: true, message: error.message })
+    }
+}
