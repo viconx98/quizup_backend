@@ -25,9 +25,10 @@ export interface IChoiceQuestion extends IQuestion {
 }
 
 interface IQuiz {
-    author: Schema.Types.ObjectId,
-    questions: (IBooleanQuestion | IChoiceQuestion)[],
-    timePerQuestion: number
+    author: Schema.Types.ObjectId;
+    title: string;
+    questions: (IBooleanQuestion | IChoiceQuestion)[];
+    timePerQuestion: number;
 }
 
 export const booleanQuestionSchema = new Schema<IBooleanQuestion>({
@@ -75,9 +76,17 @@ const quizSchema = new Schema<IQuiz>({
         ref: "User",
         required: true
     },
+    title: {
+        type: String,
+        required: true
+    },
     questions: {
         type: [choiceQuestionSchema, booleanQuestionSchema],
         default: []
+    },
+    timePerQuestion: {
+        type: Number,
+        default: 60
     }
 })
 

@@ -20,10 +20,16 @@ quizRouter.get("/me", async (request: UserRequest, response: Response) => {
 
 quizRouter.post("/add", async (request: UserRequest, response: Response) => {
     const userId = request.user.id
+    const title = request.body.title
 
     try {
+        if (title === undefined || title === null || title === "") {
+            throw new Error("title is a required field")
+        }
+
         const newQuiz = new quizModel({
-            author: userId
+            author: userId,
+            title: title
         })
 
         await newQuiz.save()
