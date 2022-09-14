@@ -18,6 +18,24 @@ quizRouter.get("/me", async (request: UserRequest, response: Response) => {
     }
 })
 
+quizRouter.get("/:quizId", async (request: UserRequest, response: Response) => {
+
+    try {
+        const quiz = await quizModel.findOne({ author: request.params.quizId })
+
+        if (quiz === null) {
+            throw new Error("There are no quiz with the id " + request.params.quizId)
+        }
+
+        return response.status(200)
+            .json(quiz)
+    } catch (error) {
+        console.error(error)
+        return response.status(400)
+            .json({ error: true, message: error.message })
+    }
+})
+
 quizRouter.post("/add", async (request: UserRequest, response: Response) => {
     const userId = request.user.id
     const title = request.body.title
