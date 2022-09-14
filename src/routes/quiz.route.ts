@@ -21,7 +21,7 @@ quizRouter.get("/me", async (request: UserRequest, response: Response) => {
 quizRouter.get("/:quizId", async (request: UserRequest, response: Response) => {
 
     try {
-        const quiz = await quizModel.findOne({ author: request.params.quizId })
+        const quiz = await quizModel.findById(request.params.quizId)
 
         if (quiz === null) {
             throw new Error("There are no quiz with the id " + request.params.quizId)
