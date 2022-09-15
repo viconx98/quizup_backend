@@ -15,7 +15,7 @@ export interface IQuestion {
     options: string[]
 }
 
-interface IQuiz {
+export interface IQuiz {
     author: Schema.Types.ObjectId;
     title: string;
     questions: IQuestion[];
