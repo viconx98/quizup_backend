@@ -1,4 +1,5 @@
 import { Schema, model, connect, Types } from 'mongoose';
+import mongoose from 'mongoose';
 
 // TODO: Images for questions
 export enum QuestionType {
@@ -6,51 +7,22 @@ export enum QuestionType {
     Choice = "choice"
 }
 
-interface IQuestion {
-    question: string,
-    correctAnswer: any,
-    questionType: QuestionType.Boolean | QuestionType.Choice
-}
-
-export interface IBooleanQuestion extends IQuestion {
-    question: string,
-    correctAnswer: boolean,
-    options?: boolean[]
-}
-
-export interface IChoiceQuestion extends IQuestion {
+export interface IQuestion {
+    _id?: mongoose.Types.ObjectId,
     question: string,
     correctAnswer: string,
+    questionType: QuestionType.Boolean | QuestionType.Choice
     options: string[]
 }
 
 interface IQuiz {
     author: Schema.Types.ObjectId;
     title: string;
-    questions: (IBooleanQuestion | IChoiceQuestion)[];
+    questions: IQuestion[];
     timePerQuestion: number;
 }
 
-export const booleanQuestionSchema = new Schema<IBooleanQuestion>({
-    question: {
-        type: String,
-        required: true
-    },
-    correctAnswer: {
-        type: Boolean,
-        required: true
-    },
-    options: {
-        type: [Boolean],
-        default: [true, false]
-    },
-    questionType: {
-        type: String,
-        default: QuestionType.Boolean
-    }
-})
-
-export const choiceQuestionSchema = new Schema<IChoiceQuestion>({
+export const questionSchema = new Schema<IQuestion>({
     question: {
         type: String,
         required: true
@@ -65,7 +37,7 @@ export const choiceQuestionSchema = new Schema<IChoiceQuestion>({
     },
     questionType: {
         type: String,
-        default: QuestionType.Choice
+        required: true
     }
 })
 
@@ -81,7 +53,7 @@ const quizSchema = new Schema<IQuiz>({
         required: true
     },
     questions: {
-        type: [choiceQuestionSchema, booleanQuestionSchema],
+        type: [questionSchema],
         default: []
     },
     timePerQuestion: {

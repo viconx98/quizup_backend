@@ -1,8 +1,9 @@
 import { Router, Request, Response } from "express";
-import { booleanQuestionValidations, choiceQuestionValidations } from "../validations/validations.js"
+import { questionValidation } from "../validations/validations.js"
 import { UserRequest, UserResponse } from "../types/types.js";
-import quizModel, { IBooleanQuestion, IChoiceQuestion, QuestionType } from "../models/quiz.model.js";
-
+import quizModel, { IQuestion, QuestionType } from "../models/quiz.model.js";
+import { Schema, model, connect, Types } from 'mongoose';
+import mongoose from "mongoose";
 const quizRouter = Router()
 
 quizRouter.get("/me", async (request: UserRequest, response: Response) => {
@@ -93,7 +94,7 @@ quizRouter.post("/question/add", async (request: UserRequest, response: Response
     const questionData = request.body.questionData
 
     try {
-        if (!Object.values(QuestionType).includes(questionData.type)) {
+        if (!Object.values(QuestionType).includes(questionData.questionType)) {
             throw new Error("Invalid question type must be 'boolean' or 'choice'")
         }
 
@@ -107,41 +108,23 @@ quizRouter.post("/question/add", async (request: UserRequest, response: Response
             throw new Error("You are not the author of this quiz")
         }
 
-        let newQuestion: (IBooleanQuestion | IChoiceQuestion)
+        await questionValidation.validate(questionData)
 
-        switch (questionData.type) {
-            case QuestionType.Boolean:
-                await booleanQuestionValidations.validate(questionData)
-
-                newQuestion = {
-                    question: questionData.question,
-                    correctAnswer: questionData.correctAnswer,
-                    questionType: QuestionType.Boolean
-                }
-
-                quiz.questions.push(newQuestion)
-
-                break
-            case QuestionType.Choice:
-                await choiceQuestionValidations.validate(questionData)
-
-                newQuestion = {
-                    question: questionData.question,
-                    correctAnswer: questionData.correctAnswer,
-                    options: questionData.options,
-                    questionType: QuestionType.Choice
-                }
-
-                quiz.questions.push(newQuestion)
-                break
-
+        let id = new mongoose.Types.ObjectId()
+        let newQuestion: IQuestion = {
+            _id: id,
+            question: questionData.question,
+            correctAnswer: questionData.correctAnswer,
+            options: questionData.options,
+            questionType: questionData.questionType,
         }
+
+        quiz.questions.push(newQuestion)
 
         await quiz.save()
 
-        // TODO: Maybe don't return the whole quiz
         return response.status(200)
-            .json(quiz)
+            .json(newQuestion)
     } catch (error) {
         console.error(error)
         return response.status(400)
@@ -174,7 +157,7 @@ quizRouter.post("/question/delete", async (request: UserRequest, response: Respo
 
         // TODO: Maybe don't return the whole quiz
         return response.status(200)
-            .json({message: "Question deleted successfully"})
+            .json({ message: "Question deleted successfully" })
     } catch (error) {
         console.error(error)
         return response.status(400)

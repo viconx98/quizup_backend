@@ -25,17 +25,12 @@ export const signinValidations = yup.object().shape({
         .required("password is required field")
 })
 
-export const booleanQuestionValidations = yup.object().shape({
+export const questionValidation = yup.object().shape({
     question: yup.string()
         .required("question is a required field"),
 
-    correctAnswer: yup.string()
-        .required("correctAnswer is a required field"),
-})
-
-export const choiceQuestionValidations = yup.object().shape({
-    question: yup.string()
-        .required("question is a required field"),
+    questionType: yup.string()
+        .required("questionType is a required field"),
 
     correctAnswer: yup.string()
         .required("correctAnswer is a required field"),
