@@ -115,7 +115,7 @@ quizRouter.post("/question/add", async (request: UserRequest, response: Response
             _id: id,
             question: questionData.question,
             correctAnswer: questionData.correctAnswer,
-            options: questionData.options,
+            options: questionData.options.map(opt => opt.toString()),
             questionType: questionData.questionType,
         }
 

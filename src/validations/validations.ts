@@ -36,7 +36,10 @@ export const questionValidation = yup.object().shape({
         .required("correctAnswer is a required field"),
 
     options: yup.array()
-        .max(4, "Invalid number of options")
-        .min(4, "Invalid number of options")
+        .test(
+            "number-of-questions",
+            "Invalid number of questions",
+            (options) => options?.length === 2 || options?.length === 4
+        )
         .required("options is a required field"),
 })
