@@ -54,6 +54,12 @@ function randomAvatar(hashLength = 10) {
     return `https://avatars.dicebear.com/api/personas/${chars.join("")}.svg`
 }
 
+// setInterval(() => {
+//     if (socketServer) {
+//         console.log(socketServer.sockets.adapter.rooms)
+//     }
+// }, 5000)
+
 mongoose.connect(DB_URI!)
     .then(result => {
         console.log("Connected to database")
@@ -83,21 +89,24 @@ mongoose.connect(DB_URI!)
                     currentIndex: 0,
                     pin: roomPin,
                     players: [],
-                    status: "waiting"
+                    status: "waiting",
+                    answerData: {}
                 }
 
                 quizRooms[roomPin] = newRoom
 
                 socketServer.to(socket.id).emit(Events.QuizCreated, newRoom)
-                socket.join(roomPin.toString())
+                // socket.join(roomPin.toString())
             })
-            
+
             socket.on(Events.JoinQuiz, (data) => {
+                console.log(`[SOCKET] ${socket.id}: ${Events.JoinQuiz}: ${JSON.stringify(data)} `)
+
                 const roomPin = data.roomPin
                 const username = data.username
 
                 if (quizRooms[roomPin] === undefined) return
-                
+
                 const player = {
                     socketId: socket.id,
                     username: username,
@@ -111,34 +120,94 @@ mongoose.connect(DB_URI!)
                 socketServer.to(socket.id).emit(Events.QuizJoined, {
                     player, roomPin
                 })
-                
+
                 // Send to admin
                 socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.PlayerJoined, quizRooms[roomPin])
-                
+
                 // Associate socket with room
                 socket.join(roomPin.toString())
             })
 
             socket.on(Events.StartQuiz, (roomPin) => {
+                console.log(`[SOCKET] ${socket.id}: ${Events.StartQuiz}: ${roomPin.toString()} `)
+
                 if (quizRooms[roomPin] === undefined) return
-                
+                console.log(roomPin)
                 quizRooms[roomPin].status = "playing"
-                
+
+                // Create a datastructure to store the answers
+                for (const question of quizRooms[roomPin].quiz.questions) {
+                    quizRooms[roomPin].answerData[question._id?.toString()!] = {}
+                }
+
                 // Send to admin
                 socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.QuizStarted, quizRooms[roomPin])
-            
-                
+
+                // Send to players
+                const currIndex = quizRooms[roomPin].currentIndex
+                const currQuestion = quizRooms[roomPin].quiz.questions[currIndex]
+
+                socketServer.to(roomPin.toString()).emit(Events.QuizStarted, {
+                    question: currQuestion
+                })
             })
 
 
+            socket.on(Events.SubmitAnswer, (data) => {
+                const { roomPin, questionId, answer, playerId } = data
 
+                if (quizRooms[roomPin] === undefined) return
 
+                // {
+                //     answerData: {
+                //         questionId: {
+                //             playerId: answer
+                //         }
+                //     }
+                // }
+                quizRooms[roomPin].answerData[questionId][playerId] = answer
 
+                socketServer.to(socket.id).emit(Events.AnswerSubmitted)
+                socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.AnswerSubmitted, quizRooms[roomPin])
+            })
+            
+            socket.on(Events.NextQuestion, (roomPin) => {
+                console.log(Events.NextQuestion, roomPin)
+                if (quizRooms[roomPin] === undefined) return
 
+                if (quizRooms[roomPin].currentIndex === quizRooms[roomPin].quiz.questions.length - 1) {
+                    console.log("here")
+                    quizRooms[roomPin].status = "completed"
 
+                    // Send to admin
+                    socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.QuizCompleted, quizRooms[roomPin])
+                    
+                    // Send to players
+                    socketServer.to(roomPin.toString()).emit(Events.QuizCompleted, quizRooms[roomPin])
+                    return
+                }
+                
+                quizRooms[roomPin].currentIndex++
+                
+                // Send to players
+                const currIndex = quizRooms[roomPin].currentIndex
+                const currQuestion = quizRooms[roomPin].quiz.questions[currIndex]
+                
+                socketServer.to(roomPin.toString()).emit(Events.QuizStarted, {
+                    question: currQuestion
+                })
 
+                // Send to admin
+                socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.AnswerSubmitted, quizRooms[roomPin])
+            })
 
+            socket.on("disconnect", () => {
+                console.log(`[SOCKET] ${socket.id}: Disconnected`)
+            })
         })
+
+        socketServer.on("error", (err) => console.log(JSON.stringify(err)))
+
     })
     .catch(error => {
         console.error("Connection to database failed with", error)
