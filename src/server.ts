@@ -193,12 +193,12 @@ mongoose.connect(DB_URI!)
                 const currIndex = quizRooms[roomPin].currentIndex
                 const currQuestion = quizRooms[roomPin].quiz.questions[currIndex]
                 
-                socketServer.to(roomPin.toString()).emit(Events.QuizStarted, {
+                socketServer.to(roomPin.toString()).emit(Events.NewQuestion, {
                     question: currQuestion
                 })
 
                 // Send to admin
-                socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.AnswerSubmitted, quizRooms[roomPin])
+                socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.NewQuestion, quizRooms[roomPin])
             })
 
             socket.on("disconnect", () => {
