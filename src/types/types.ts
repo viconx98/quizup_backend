@@ -49,6 +49,7 @@ export interface QuizRoom {
     quiz: IQuiz;
     answerData: any;
     currentIndex: number;
+    top: any[];
 }
 
 export interface QuizRooms {

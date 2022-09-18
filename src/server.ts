@@ -89,6 +89,7 @@ mongoose.connect(DB_URI!)
                     currentIndex: 0,
                     pin: roomPin,
                     players: [],
+                    top: [],
                     status: "waiting",
                     answerData: {}
                 }
@@ -170,7 +171,7 @@ mongoose.connect(DB_URI!)
                 socketServer.to(socket.id).emit(Events.AnswerSubmitted)
                 socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.AnswerSubmitted, quizRooms[roomPin])
             })
-            
+
             socket.on(Events.NextQuestion, (roomPin) => {
                 console.log(Events.NextQuestion, roomPin)
                 if (quizRooms[roomPin] === undefined) return
@@ -179,20 +180,22 @@ mongoose.connect(DB_URI!)
                     console.log("here")
                     quizRooms[roomPin].status = "completed"
 
+                    quizRooms[roomPin].top = createTopThree(quizRooms[roomPin])
+
                     // Send to admin
                     socketServer.to(quizRooms[roomPin].adminSocketId).emit(Events.QuizCompleted, quizRooms[roomPin])
-                    
+
                     // Send to players
                     socketServer.to(roomPin.toString()).emit(Events.QuizCompleted, quizRooms[roomPin])
                     return
                 }
-                
+
                 quizRooms[roomPin].currentIndex++
-                
+
                 // Send to players
                 const currIndex = quizRooms[roomPin].currentIndex
                 const currQuestion = quizRooms[roomPin].quiz.questions[currIndex]
-                
+
                 socketServer.to(roomPin.toString()).emit(Events.NewQuestion, {
                     question: currQuestion
                 })
@@ -213,6 +216,46 @@ mongoose.connect(DB_URI!)
         console.error("Connection to database failed with", error)
         console.error("Server will not be started")
     })
+
+const findQuestionById = (quizRoom: QuizRoom, questionId: string) => {
+    console.log(quizRoom)
+    console.log(quizRoom.quiz.questions)
+    console.log(questionId)
+    return quizRoom.quiz.questions.find((que: any) => que._id.toString() === questionId)
+}
+
+function createTopThree(quizRoom: QuizRoom) {
+    const top: any = []
+
+    const answerData = quizRoom.answerData
+    console.log(answerData)
+    for (const player of quizRoom.players) {
+        const playerId = player.socketId
+
+        const playerObj = JSON.parse(JSON.stringify(player))
+
+        playerObj.correctAnswers = 0
+
+        for (const questionId in answerData) {
+            const playersAnswer = answerData[questionId][playerId]
+            const question = findQuestionById(quizRoom, questionId)
+
+            console.log(playersAnswer, question?.correctAnswer)
+
+            if (playersAnswer === question?.correctAnswer) {
+                playerObj.correctAnswers++
+            }
+        }
+
+        top.push(playerObj)
+    }
+
+    top.sort((a, b) => {
+        return b.correctAnswers - a.correctAnswers 
+    })
+
+    return top
+}
 
 function authorize(request: UserRequest, response: Response, next: () => void) {
     const authorization = request.headers.authorization
