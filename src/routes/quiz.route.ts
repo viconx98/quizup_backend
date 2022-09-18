@@ -4,7 +4,11 @@ import { UserRequest, UserResponse } from "../types/types.js";
 import quizModel, { IQuestion, QuestionType } from "../models/quiz.model.js";
 import { Schema, model, connect, Types } from 'mongoose';
 import mongoose from "mongoose";
+import uploadMiddleware from "../multer.js"
+
 const quizRouter = Router()
+
+
 
 quizRouter.get("/me", async (request: UserRequest, response: Response) => {
     try {
@@ -132,6 +136,23 @@ quizRouter.post("/question/add", async (request: UserRequest, response: Response
     }
 })
 
+quizRouter.post("/question/uploadImage", uploadMiddleware.single("image"), async (request: UserRequest, response: Response) => {
+    try {
+        const url = "http://localhost:3001/" + "images/" + request.file?.filename
+
+        return response.status(200)
+            .send({
+                fileUrl: url
+            })
+        
+    } catch (error) {
+        console.error(error)
+        return response.status(400)
+            .json({ error: true, message: error.message })
+    } 
+
+})
+
 quizRouter.post("/question/delete", async (request: UserRequest, response: Response) => {
     const userId = request.user.id
     const quizId = request.body.quizId
@@ -155,7 +176,6 @@ quizRouter.post("/question/delete", async (request: UserRequest, response: Respo
         })
 
 
-        // TODO: Maybe don't return the whole quiz
         return response.status(200)
             .json({ message: "Question deleted successfully" })
     } catch (error) {

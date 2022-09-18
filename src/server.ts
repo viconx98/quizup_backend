@@ -11,13 +11,21 @@ import jwt from "jsonwebtoken"
 import { Events, QuizRoom, QuizRooms, User, UserRequest } from "./types/types.js"
 import { Server } from "socket.io"
 import quizModel from "./models/quiz.model.js"
+import * as path from "path"
+import * as url from "url"
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url))
 
 
 const expressApp = express()
 
 expressApp.use(cors())
 expressApp.use(express.json())
+expressApp.use(express.urlencoded({ extended: true }))
 expressApp.use(morgan("dev"))
+
+expressApp.use(express.static("public"))
+expressApp.use(express.static(path.join(__dirname, "public")))
 
 expressApp.get("/", (request: Request, response: Response) => {
     return response.status(200).send("Quizup API is up and running")
@@ -54,11 +62,6 @@ function randomAvatar(hashLength = 10) {
     return `https://avatars.dicebear.com/api/personas/${chars.join("")}.svg`
 }
 
-// setInterval(() => {
-//     if (socketServer) {
-//         console.log(socketServer.sockets.adapter.rooms)
-//     }
-// }, 5000)
 
 mongoose.connect(DB_URI!)
     .then(result => {
