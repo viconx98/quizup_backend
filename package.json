@@ -25,13 +25,13 @@
     "multer": "^1.4.5-lts.1",
     "nanoid": "^4.0.0",
     "socket.io": "^4.5.2",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "typescript": "^4.8.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/node": "^18.7.17",
     "nodemon": "^2.0.19",
-    "tsc-watch": "^5.0.3",
-    "typescript": "^4.8.3"
+    "tsc-watch": "^5.0.3"
   }
 }
