@@ -1,0 +1,318 @@
+{
+	"info": {
+		"_postman_id": "92468b6c-b042-49ff-9500-dd57d2abb948",
+		"name": "Quiz Up",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Sign up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123123\",\r\n    \"email\": \"ttest@test.test\",\r\n    \"name\": \"Test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123123\",\r\n    \"email\": \"test@test.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/auth/signin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMjAwYWEzMGI1YmRmYmFiMzBlZGM3YSIsIm5hbWUiOiJUZXN0IiwiZW1haWwiOiJ0dGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE2NjMwNDUyMDAsImV4cCI6MTY2MzY1MDAwMH0.VfzsODcJJjumc7pMfOjlz_Iai4xcSj6U0p3i5S74XFc\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/auth/refreshToken",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"auth",
+								"refreshToken"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Manage Quizzes",
+			"item": [
+				{
+					"name": "Add a new quiz",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMjE1YmZjNzJhYWRkN2M0ZTdiMDZlZSIsIm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjYzMjE5MTMxLCJleHAiOjE2NjMyNDA3MzF9.4iPO31xtGVmVs2J-soQ4nIk-kGl6lp4M1e1GUW1bS3A",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \" Hello world 5Hello world 5Hello world 5Hello world 5Hello world 5Hello world 5Hello world 5\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/quiz/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"quiz",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete quiz",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMjAwYWEzMGI1YmRmYmFiMzBlZGM3YSIsIm5hbWUiOiJUZXN0IiwiZW1haWwiOiJ0dGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE2NjMxNDUxNjQsImV4cCI6MTY2MzE2Njc2NH0.pMhYVcwE0JJOb0F4HrImiGJE1063ieaQry6hXTVTxZQ",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quizId\": \"6320480c2b56abe6e0ec702f\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/quiz/delete",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"quiz",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload question image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMjE1YmZjNzJhYWRkN2M0ZTdiMDZlZSIsIm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjYzNTIzOTAzLCJleHAiOjE2NjM1NDU1MDN9.44ydDG_pfJGxFaJooLxaV-6fIvvUbcFiOrR9XeykpT0",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quizId\": \"6320480c2b56abe6e0ec702f\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/quiz/question/uploadImage",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"quiz",
+								"question",
+								"uploadImage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add question to a quiz",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMjE1YmZjNzJhYWRkN2M0ZTdiMDZlZSIsIm5hbWUiOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjYzMjE5MTMxLCJleHAiOjE2NjMyNDA3MzF9.4iPO31xtGVmVs2J-soQ4nIk-kGl6lp4M1e1GUW1bS3A",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quizId\": \"6322b5eb30a8f4fb63bcfc7d\",\r\n    \"questionData\": {\r\n        \"questionType\": \"boolean\",\r\n        \"question\": \"What is 1+1?\",\r\n        \"options\": [\r\n            1, 2, 3, 4\r\n        ],\r\n        \"correctAnswer\": \"true\"   \r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/quiz/question/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"quiz",
+								"question",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete question from a quiz",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMjAwYWEzMGI1YmRmYmFiMzBlZGM3YSIsIm5hbWUiOiJUZXN0IiwiZW1haWwiOiJ0dGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE2NjMwNTIzNDQsImV4cCI6MTY2MzA3Mzk0NH0.jjy_1oQ44X05jPXmvIZBa1CXFDJAQJ84ssFYAuHubjk",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quizId\": \"6320491dfaaa89f12d0c2b1d\",\r\n    \"questionId\": \"63204926faaa89f12d0c2b20\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/quiz/question/delete",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"quiz",
+								"question",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all quizes that belongs to the user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzMjAwYWEzMGI1YmRmYmFiMzBlZGM3YSIsIm5hbWUiOiJUZXN0IiwiZW1haWwiOiJ0dGVzdEB0ZXN0LnRlc3QiLCJpYXQiOjE2NjMxNDUxNjQsImV4cCI6MTY2MzE2Njc2NH0.pMhYVcwE0JJOb0F4HrImiGJE1063ieaQry6hXTVTxZQ",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/quiz/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"quiz",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
