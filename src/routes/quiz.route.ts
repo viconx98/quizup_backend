@@ -141,7 +141,7 @@ quizRouter.post("/question/add", async (request: UserRequest, response: Response
 
 quizRouter.post("/question/uploadImage", uploadMiddleware.single("image"), async (request: UserRequest, response: Response) => {
     try {
-        const url = "http://localhost:3001/" + "images/" + request.file?.filename
+        const url = "https://vc-quizup-backend.herokuapp.com/" + "images/" + request.file?.filename
 
         return response.status(200)
             .send({
