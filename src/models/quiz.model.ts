@@ -8,11 +8,12 @@ export enum QuestionType {
 }
 
 export interface IQuestion {
-    _id?: mongoose.Types.ObjectId,
-    question: string,
-    correctAnswer: string,
-    questionType: QuestionType.Boolean | QuestionType.Choice
-    options: string[]
+    _id?: mongoose.Types.ObjectId;
+    question: string;
+    correctAnswer: string;
+    questionType: QuestionType.Boolean | QuestionType.Choice;
+    options: string[];
+    image?: string;
 }
 
 export interface IQuiz {
@@ -38,6 +39,10 @@ export const questionSchema = new Schema<IQuestion>({
     questionType: {
         type: String,
         required: true
+    },
+    image: {
+        type: String,
+        default: null
     }
 })
 

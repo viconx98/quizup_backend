@@ -82,7 +82,12 @@ mongoose.connect(DB_URI!)
 
                 const quiz = await quizModel.findById(quizId)
 
-                const roomPin = getRandomRoomId()
+                let roomPin = getRandomRoomId()
+
+                while(quizRooms[roomPin] !== undefined) {
+                    roomPin = getRandomRoomId()
+                    break
+                }
 
                 const newRoom: QuizRoom = {
                     admin: adminId,

@@ -2,12 +2,10 @@ import { Router, Request, Response } from "express";
 import { questionValidation } from "../validations/validations.js"
 import { UserRequest, UserResponse } from "../types/types.js";
 import quizModel, { IQuestion, QuestionType } from "../models/quiz.model.js";
-import { Schema, model, connect, Types } from 'mongoose';
 import mongoose from "mongoose";
 import uploadMiddleware from "../multer.js"
 
 const quizRouter = Router()
-
 
 
 quizRouter.get("/me", async (request: UserRequest, response: Response) => {
@@ -48,6 +46,10 @@ quizRouter.post("/add", async (request: UserRequest, response: Response) => {
     try {
         if (title === undefined || title === null || title === "") {
             throw new Error("title is a required field")
+        }
+        
+        if (title.length > 100) {
+            throw new Error("Quiz title is too long")
         }
 
         const newQuiz = new quizModel({
@@ -121,6 +123,7 @@ quizRouter.post("/question/add", async (request: UserRequest, response: Response
             correctAnswer: questionData.correctAnswer,
             options: questionData.options.map(opt => opt.toString()),
             questionType: questionData.questionType,
+            image: questionData.image
         }
 
         quiz.questions.push(newQuestion)
